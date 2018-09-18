@@ -1,0 +1,9 @@
+{% if footage_list %}
+    <ul>
+    {% for f in footage_list %}
+    <li>{{f.date}} - {{f.footype}} - {{f.foocause}}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No footage found.</p>
+{% endif %}
