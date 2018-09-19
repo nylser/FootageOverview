@@ -1,8 +1,11 @@
 from django.shortcuts import render, get_object_or_404
+from django.views.generic import FormView
 from django.http import HttpResponse, Http404
 from django.template import loader
 from .models import Location, Footage, Camera
-# Create your views here.
+from .forms import FilterForm
+from datetime import datetime
+
 
 def index(request):
     location_list = Location.objects.all()
@@ -20,10 +23,29 @@ def location(request, location_id):
     context = {'camera_list': camera_list, 'location': location}
     return render(request, 'FootageManager/location.html', context=context)
 
+
 def camera(request, camera_id):
     camera = get_object_or_404(Camera, pk=camera_id)
-    footage_list = Footage.objects.filter(camera=camera).order_by('date')
-    return render(request, 'FootageManager/camera.html', {'footage_list': footage_list})
+    data = []
+    if request.method == "POST":
+        form = FilterForm(request.POST)
+        footype = request.POST.get("footype")
+        foocause = request.POST.get("foocause")
+
+        date = request.POST.get("date")
+        end_time = request.POST.get("end_time")
+        start_time = request.POST.get("start_time")
+        start_date = datetime.strptime("{}, {}".format(
+            date, start_time), "%d.%m.%Y, %H:%M")
+        end_date = datetime.strptime("{}, {}".format(
+            date, end_time), "%d.%m.%Y, %H:%M")
+        data = Footage.objects.order_by('date').filter(
+            camera=camera, footype=footype, foocause=foocause,
+            date__gte=start_date, date__lte=end_date)
+    else:
+        form = FilterForm()
+    return render(request, 'FootageManager/camera.html',
+                  {'camera': camera, 'form': form, 'data': data})
 
 
 def year_view(request, camera_id, year):
@@ -33,10 +55,13 @@ def year_view(request, camera_id, year):
     for f in footage_list:
         if f.date.month not in months:
             months.append(f.date.month)
-    return render(request, 'FootageManager/year_view.html', {'camera_id':camera_id, 'year': year, 'month_list': months})
+    return render(request, 'FootageManager/year_view.html',
+                  {'camera_id': camera_id, 'year': year, 'month_list': months})
+
 
 def month_view(request, camera_id, year, month):
     pass
+
 
 def day_view(request, camera_id, year, day, month):
     pass

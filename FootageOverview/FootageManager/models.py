@@ -25,14 +25,18 @@ class Footage(models.Model):
         (PERIODIC, 'Periodic'),
         (ALARM, 'Alarm'),
     )
-    footype = models.CharField('type', max_length=3, choices=TYPE_CHOICES, default=PICTURE)
-    foocause = models.CharField('cause', max_length=3, choices=CAUSE_CHOICES, default=PERIODIC)
+    footype = models.CharField(
+        'type', max_length=3, choices=TYPE_CHOICES, default=PICTURE)
+    foocause = models.CharField(
+        'cause', max_length=3, choices=CAUSE_CHOICES, default=PERIODIC)
     filepath = models.FilePathField('Footage path', allow_files=True)
     camera = models.ForeignKey('Camera', on_delete=models.CASCADE)
     length = models.IntegerField('length', blank=True, default=0)
 
     def __str__(self):
-        return self.get_footype_display() + " - " + self.get_foocause_display() + " - " + str(self.date)
+        return self.get_footype_display() + " - "
+        + self.get_foocause_display() + " - " + str(self.date)
+
 
 def parse_footage(filepath, camera):
     cause = None
@@ -53,8 +57,10 @@ def parse_footage(filepath, camera):
         date = pytz.utc.localize(date)
         return Footage(foocause=cause, footype=ftype, date=date, filepath=filepath, camera=camera)
     else:
-        start = datetime.strptime(''.join(datename.split("_")[0:2]), Footage.VID_TIMEFORMAT)
-        end = datetime.strptime(datename.split("_")[0]+datename.split("_")[2], Footage.VID_TIMEFORMAT)
+        start = datetime.strptime(
+            ''.join(datename.split("_")[0:2]), Footage.VID_TIMEFORMAT)
+        end = datetime.strptime(datename.split(
+            "_")[0]+datename.split("_")[2], Footage.VID_TIMEFORMAT)
         length = end - start
         return Footage(foocause=cause, footype=ftype, date=start, filepath=filepath, camera=camera, length=length.total_seconds())
 
@@ -64,10 +70,12 @@ class Location(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class Camera(models.Model):
     name = models.CharField(max_length=200)
-    directory = models.FilePathField('../', allow_folders=True, allow_files=False)
+    directory = models.FilePathField(
+        '../', allow_folders=True, allow_files=False)
     location = models.ForeignKey('Location', on_delete=models.CASCADE)
 
     def __str__(self):

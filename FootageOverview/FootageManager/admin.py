@@ -6,6 +6,7 @@ from .models import Location, Footage, Camera
 admin.site.register(Location)
 admin.site.register(Camera)
 
+
 @admin.register(Footage)
 class FootageAdmin(admin.ModelAdmin):
     date_hierarchy = 'date'

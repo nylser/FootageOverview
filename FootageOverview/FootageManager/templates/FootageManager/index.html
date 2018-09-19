@@ -1,18 +1,16 @@
-{% include 'base.html' %}
+{% extends 'base.html' %}
 
-<main class="" id="content" role="main">
-  <div class="container-fluid">
-    <h1 class="mb-3 bd-text-purple-bright">Locations:</h1>
-    {% if location_list %}
-        <ul class="list-group">
-        {% for location in location_list %}
-            <li class="list-group-item"><a href="{% url 'location' location.id %}">{{location.name}}</a></li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No locations found.</p>
-    {% endif %}
-  </div>
-</main>
+{% block content %}
 
-{% include 'footer.html' %}
+<h1 class="mb-3 bd-text-purple-bright">Locations:</h1>
+{% if location_list %}
+    <ul class="list-group">
+    {% for location in location_list %}
+        <li class="list-group-item"><a href="{% url 'location' location.id %}">{{location.name}}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No locations found.</p>
+{% endif %}
+
+{% endblock %}

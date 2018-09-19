@@ -1,13 +1,26 @@
 {% load static %}
+
 <!doctype html>
 <html>
     <head>
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        
         <link rel='stylesheet' href='{% static "bootstrap/css/bootstrap.css"%}'>
 
+        <script src='{% static "jquery-3.3.1.min.js"%}'></script>
+        <script src='{% static "popper.min.js"%}'></script>
+        <script src='{% static "bootstrap/js/bootstrap.js"%}'></script>
         <title>FootageManager</title>
     </head>
     <body>
+    <main>
+        <div class="container-fluid">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+    
+    
+    </body>
+</html>
