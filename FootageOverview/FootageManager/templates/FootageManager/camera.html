@@ -42,22 +42,77 @@
     </form>
 </div>
 {% load static %}
-<img src="{% static 'w1/20180908/images/P18090821035110.jpg' %}"></img>
+<nav aria-label="Search resulsts">
+    <ul class="pagination flex-wrap">
+        {% if data.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ data.previous_page_number }}">Previous</a></li>
+        {% else %}
+            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        {% endif %}
+        
+        {% for page in data.paginator.page_range %}
+            {% if page is data.number %}
+                <li class="page-item active"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if data.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ data.next_page_number }}">Next</a></li>
+        {% else %}
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        {% endif %}
+        
+    </ul>
+</nav>
+<!--
+<div class="pagination">
+    <span class="step-links">
+        {% if data.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ data.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ data.number }} of {{ data.paginator.num_pages }}.
+        </span>
+
+        {% if data.has_next %}
+            <a href="?page={{ data.next_page_number }}">next</a>
+            <a href="?page={{ data.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>-->
+
 
 <div class="row">
     <div class="col">
-        <h3>Results</h3>
+        
+        
 
         {% if data %}
-
-        <ul class="list-group">
+        <h3>Results - {{ from|time }} <span class="glyphicon glyphicon-arrow-right" aria-hidden="true">-></span> {{to|time}}</h3>
+        <div class="row">
             {% for item in data %}
-
-            <li class="list-group-item">{{ item.date }}</li>
-
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3" >
+                <div class="card thumbnail-card">
+                
+                    <a data-gallery='gal' data-toggle="lightbox" 
+                    href="{% static item.staticpath %%}" data-width='1280' data-footer='{{item.date}}'>
+                        <img class="card-img" src="{% static item.thumbnail_path %}">
+                        
+                    </a>
+                    <div class="card-footer">
+                        {{ item.date }}
+                    </div>
+                
+                </div>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
 
+        {% else %}
+        <h3> No results! </h3>
         {% endif %}
     </div>
 </div>

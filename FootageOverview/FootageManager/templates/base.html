@@ -7,10 +7,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel='stylesheet' href='{% static "bootstrap/css/bootstrap.css"%}'>
+        <link rel='stylesheet' href='{% static 'style.css' %}'>
+        <link rel='stylesheet' href='{% static 'lightbox/ekko-lightbox.css' %}'>
 
         <script src='{% static "jquery-3.3.1.min.js"%}'></script>
         <script src='{% static "popper.min.js"%}'></script>
         <script src='{% static "bootstrap/js/bootstrap.js"%}'></script>
+        <script src='{% static 'lightbox/ekko-lightbox.js' %}'></script>
         <title>FootageManager</title>
     </head>
     <body>
@@ -21,6 +24,11 @@
         </div>
     </main>
     
-    
+    <script>
+    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+                event.preventDefault();
+                $(this).ekkoLightbox();
+            });
+    </script>
     </body>
 </html>

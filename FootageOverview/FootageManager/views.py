@@ -2,9 +2,12 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import FormView
 from django.http import HttpResponse, Http404
 from django.template import loader
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+
 from .models import Location, Footage, Camera
 from .forms import FilterForm
 from datetime import datetime
+import pytz
 
 
 def index(request):
@@ -27,11 +30,19 @@ def location(request, location_id):
 def camera(request, camera_id):
     camera = get_object_or_404(Camera, pk=camera_id)
     data = []
+    fresh = False
+    if not request.method == 'POST':
+        if 'footage-search' in request.session:
+            request.POST = request.session['footage-search']
+            request.method = 'POST'
+    else:
+        fresh = True
+
     if request.method == "POST":
         form = FilterForm(request.POST)
+        request.session['footage-search'] = request.POST
         footype = request.POST.get("footype")
         foocause = request.POST.get("foocause")
-
         date = request.POST.get("date")
         end_time = request.POST.get("end_time")
         start_time = request.POST.get("start_time")
@@ -42,10 +53,22 @@ def camera(request, camera_id):
         data = Footage.objects.order_by('date').filter(
             camera=camera, footype=footype, foocause=foocause,
             date__gte=start_date, date__lte=end_date)
+
     else:
         form = FilterForm()
+
+    paginator = Paginator(data, 50)
+    page = request.GET.get('page')
+    if fresh:
+        page = 1
+    data_list = paginator.get_page(page)
+    from_date = to_date = None
+    if(data_list.start_index() > 0):
+        from_date = data[data_list.start_index()-1].date
+        to_date = data[data_list.end_index()-1].date
     return render(request, 'FootageManager/camera.html',
-                  {'camera': camera, 'form': form, 'data': data})
+                  {'camera': camera, 'form': form, 'data': data_list,
+                   'from': from_date, 'to': to_date})
 
 
 def year_view(request, camera_id, year):

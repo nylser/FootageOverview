@@ -25,7 +25,9 @@ SECRET_KEY = 'qnwu#+1=x%e-tovzozjf(h@lbx^ucmdvd6flm(z&(&j#-xdxwu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.2.184', ]
+
+FOOTAGE_BASEPATH = "/home/korbinian/dev/FootageOverview/"
 
 
 # Application definition

@@ -5,6 +5,8 @@ from django.db.models.signals import post_init
 import os.path
 import pytz
 
+from django.conf import settings
+
 
 # Create your models here.
 
@@ -30,6 +32,8 @@ class Footage(models.Model):
     foocause = models.CharField(
         'cause', max_length=3, choices=CAUSE_CHOICES, default=PERIODIC)
     filepath = models.FilePathField('Footage path', allow_files=True)
+    staticpath = models.CharField('static_path', max_length=200)
+    thumbnail_path = models.CharField('thumbnail_path', max_length=200)
     camera = models.ForeignKey('Camera', on_delete=models.CASCADE)
     length = models.IntegerField('length', blank=True, default=0)
 
@@ -43,6 +47,7 @@ def parse_footage(filepath, camera):
     ftype = None
     date = None
     pre = os.path.basename(filepath)[0:1]
+    staticpath = filepath.replace(settings.FOOTAGE_BASEPATH, '')
     if pre == "A":
         cause = Footage.ALARM
     else:
@@ -55,14 +60,22 @@ def parse_footage(filepath, camera):
     if ftype == Footage.PICTURE:
         date = datetime.strptime(datename, Footage.PIC_TIMEFORMAT)
         date = pytz.utc.localize(date)
-        return Footage(foocause=cause, footype=ftype, date=date, filepath=filepath, camera=camera)
+        return Footage(foocause=cause, footype=ftype,
+                       date=date, filepath=filepath,
+                       camera=camera, staticpath=staticpath,
+                       thumbnail_path=staticpath)
     else:
         start = datetime.strptime(
             ''.join(datename.split("_")[0:2]), Footage.VID_TIMEFORMAT)
         end = datetime.strptime(datename.split(
             "_")[0]+datename.split("_")[2], Footage.VID_TIMEFORMAT)
         length = end - start
-        return Footage(foocause=cause, footype=ftype, date=start, filepath=filepath, camera=camera, length=length.total_seconds())
+        thumbnailpath = staticpath.replace("record", "thumbnail")
+        thumbnailpath = thumbnailpath.replace("mp4", "jpg")
+        return Footage(foocause=cause, footype=ftype,
+                       date=start, filepath=filepath, camera=camera,
+                       length=length.total_seconds(),
+                       staticpath=staticpath, thumbnail_path=thumbnailpath)
 
 
 class Location(models.Model):
@@ -82,7 +95,7 @@ class Camera(models.Model):
         return self.name + " - " + self.location.name
 
     def do_scan(self):
-        #videos = glob(self.directory+"/**/*.264", recursive=True)
+        # videos = glob(self.directory+"/**/*.264", recursive=True)
         videos = glob(self.directory+"/**/*.mp4", recursive=True)
         images = glob(self.directory+"/**/*.jpg", recursive=True)
         img_db = Footage.objects.filter(footype=Footage.PICTURE)
@@ -92,7 +105,7 @@ class Camera(models.Model):
 
         to_add = []
         for image in images:
-            if image not in img_db:
+            if 'thumbnail' not in image and image not in img_db:
                 to_add.append(image)
         for vid in videos:
             if not vid.endswith('_pre.mp4') and vid not in vid_db:
