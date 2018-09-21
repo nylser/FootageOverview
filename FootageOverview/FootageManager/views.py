@@ -63,7 +63,7 @@ def camera(request, camera_id):
         page = 1
     data_list = paginator.get_page(page)
     from_date = to_date = None
-    if(data_list.start_index() > 0):
+    if data_list.start_index() > 0:
         from_date = data[data_list.start_index()-1].date
         to_date = data[data_list.end_index()-1].date
     return render(request, 'FootageManager/camera.html',
@@ -80,11 +80,3 @@ def year_view(request, camera_id, year):
             months.append(f.date.month)
     return render(request, 'FootageManager/year_view.html',
                   {'camera_id': camera_id, 'year': year, 'month_list': months})
-
-
-def month_view(request, camera_id, year, month):
-    pass
-
-
-def day_view(request, camera_id, year, day, month):
-    pass

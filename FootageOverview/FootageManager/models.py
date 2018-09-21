@@ -38,8 +38,8 @@ class Footage(models.Model):
     length = models.IntegerField('length', blank=True, default=0)
 
     def __str__(self):
-        return self.get_footype_display() + " - "
-        + self.get_foocause_display() + " - " + str(self.date)
+        return self.get_footype_display() + " - " \
+               + self.get_foocause_display() + " - " + str(self.date)
 
 
 def parse_footage(filepath, camera):
