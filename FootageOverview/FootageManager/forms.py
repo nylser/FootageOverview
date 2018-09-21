@@ -1,6 +1,5 @@
 from django import forms
-from .models import Location, Camera, Footage
-from datetime import time, date, datetime
+from .models import Footage
 from bootstrap_datepicker_plus import DatePickerInput, TimePickerInput
 
 
