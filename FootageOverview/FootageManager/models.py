@@ -73,7 +73,7 @@ def parse_footage(filepath, camera):
         thumbnailpath = staticpath.replace("record", "thumbnail")
         thumbnailpath = thumbnailpath.replace("mp4", "jpg")
         return Footage(foocause=cause, footype=ftype,
-                       date=pytz.utc.localice(start), filepath=filepath, camera=camera,
+                       date=pytz.utc.localize(start), filepath=filepath, camera=camera,
                        length=length.total_seconds(),
                        staticpath=staticpath, thumbnail_path=thumbnailpath)
 
