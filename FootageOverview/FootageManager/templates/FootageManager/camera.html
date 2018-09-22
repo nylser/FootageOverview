@@ -3,6 +3,8 @@
 {% block content %}
 {% load bootstrap %}
 
+<a href="{%  url 'location' camera.location.id %}"><< {{   camera.location.name }}</a>
+
 <h1>
     {{ camera.location.name }} - {{ camera.name }}
 </h1>
@@ -116,6 +118,29 @@
         {% endif %}
     </div>
 </div>
+<nav aria-label="Search resulsts">
+    <ul class="pagination flex-wrap">
+        {% if data.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ data.previous_page_number }}">Previous</a></li>
+        {% else %}
+            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        {% endif %}
+
+        {% for page in data.paginator.page_range %}
+            {% if page is data.number %}
+                <li class="page-item active"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if data.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ data.next_page_number }}">Next</a></li>
+        {% else %}
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        {% endif %}
+
+    </ul>
+</nav>
 
 
 
