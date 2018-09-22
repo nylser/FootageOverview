@@ -110,8 +110,8 @@ class Camera(models.Model):
         for vid in videos:
             if not vid.endswith('_pre.mp4') and vid not in vid_db:
                 to_add.append(vid)
-
+        bulk_list = []
         for footage in to_add:
-            i = parse_footage(footage, self)
-            i.save()
+            bulk_list.append(parse_footage(footage, self))
+        Footage.objects.bulk_create(bulk_list)
         return len(to_add)
